@@ -145,10 +145,8 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 BOARD_VNDK_VERSION := current
 
 # VINTF
-DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
-
-DEVICE_MATRIX_FILE := \
-    $(DEVICE_PATH)/compatibility_matrix.xml
+DEVICE_MANIFEST_FILE := device/realme/RMX3761/manifest.xml
+DEVICE_MATRIX_FILE := device/realme/RMX3761/compatibility_matrix.xml
 
 # Inherit the proprietary files
 include vendor/samsung/a10s/BoardConfigVendor.mk
