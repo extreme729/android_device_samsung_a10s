@@ -1,3 +1,4 @@
+
 #
 # Copyright (C) 2024 The LineageOS Project
 #
@@ -47,24 +48,28 @@ HWUI_COMPILE_FOR_PERF := true
 BOARD_BOOT_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x40078000
 BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE += androidboot.super_partition=system
+BOARD_KERNEL_CMDLINE += kpti=off
+BOARD_KERNEL_CMDLINE += androidboot.init_fatal_reboot_target=recovery
 BOARD_KERNEL_PAGESIZE := 2048
-BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --second_offset $(BOARD_KERNEL_SECOND_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_KERNEL_SEPARATED_DTBO := true
+BOARD_INCLUDE_RECOVERY_DTBO := true
+TARGET_KERNEL_ARCH := arm64
+TARGET_KERNEL_CLANG_COMPILE := true
+TARGET_KERNEL_CLANG_VERSION := 11.x
 TARGET_KERNEL_CONFIG := lineage_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/a10s
-
-# Kernel - prebuilt
-TARGET_FORCE_PREBUILT_KERNEL := true
-ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilts/kernel
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilts/dtb.img
-BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-BOARD_INCLUDE_DTB_IN_BOOTIMG := 
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilts/dtbo.img
-BOARD_KERNEL_SEPARATED_DTBO := 
-endif
 
 # Keymaster
 TARGET_KEYMASTER_VARIANT := samsung
@@ -144,15 +149,17 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 # VNDK
 BOARD_VNDK_VERSION := current
 
-# DEVICE MANIFEST
-DEVICE_MANIFEST_FILE := device/samsung/a10s/manifest.xml
-DEVICE_MATRIX_FILE := device/samsung/a10s/compatibility_matrix.xml
-
 # VINTF
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     hardware/mediatek/vintf/mediatek_framework_compatibility_matrix.xml \
     hardware/samsung/vintf/samsung_framework_compatibility_matrix.xml \
     vendor/lineage/config/device_framework_matrix.xml \
+
+# VINTF
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
+
+DEVICE_MATRIX_FILE := \
+    $(DEVICE_PATH)/compatibility_matrix.xml
 
 # Inherit the proprietary files
 include vendor/samsung/a10s/BoardConfigVendor.mk
